@@ -1,7 +1,4 @@
 #!/system/bin/sh
-rm -rf /sdcard/Enjoy-MIUIXP-by-XenoOP
-touch /sdcard/Enjoy-MIUIXP-by-XenoOP
-echo "Give respect to work been Done" > /sdcard/Enjoy-MIUIXP-by-XenoOP    
 sleep 20
 temp=/sdcard/Android/data/temp
 sysdir=/data/system
